@@ -21,7 +21,7 @@ def evaluate():
         query = case["query"]
         expected = case["expected_keywords"]
 
-        results = hybrid_search(query, top_k=5)
+        results = hybrid_search(query, top_k=10)
 
         names = " ".join(
             r["name"]
@@ -44,9 +44,9 @@ def evaluate():
         for r in results:
             print("-", r["name"])
 
-    recall_at_5 = successful / total
+    recall_at_10 = successful / total
 
-    print("\nRecall@5:", recall_at_5)
+    print("\nRecall@10:", recall_at_10)
 
 
 if __name__ == "__main__":

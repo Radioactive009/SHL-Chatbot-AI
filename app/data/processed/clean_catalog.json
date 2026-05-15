@@ -1384,34 +1384,6 @@
     "adaptive_support": "no"
   },
   {
-    "entity_id": "3931",
-    "name": "Customer Service Phone Solution",
-    "url": "https://www.shl.com/products/product-catalog/view/customer-service-phone-solution/",
-    "description": "As part of Contact Center Simulations, the Customer Service Phone Solution includes a contact center simulation and two behavioral tests designed to measure a wide range of skills, competencies, and behavioral tendencies relevant for contact center jobs. The Contact Center Simulation provides an opportunity for candidates to interact with simulated customers in a contact center environment. Designed to measure a candidate\u2019s ability to listen attentively to the customer, take ownership of customer issues, resolve issues, navigate to find information, and enter information accurately, the Contact Center Simulation is intended to measure how a candidate will respond in a variety of customer situations and assess the candidate\u2019s computer skills in a contact center setting. The behavioral tests in this solution are intended to measure the candidate\u2019s learning potential and the tendency to meet goals and work hard, even when faced with obstacles. Collectively, the assessments in this solution measure a wide range of important skills, abilities, and behaviors for entry-level contact center roles.\n\"Please note that for Simplified Chinese version the audio is available in both Mandarin and Cantonese.\"",
-    "duration": "30 minutes",
-    "languages": [
-      "French (Canada)",
-      "Italian",
-      "French",
-      "Dutch",
-      "Spanish",
-      "Portuguese (Brazil)",
-      "Chinese Simplified",
-      "English (Australia)",
-      "Latin American Spanish",
-      "English (USA)",
-      "English International"
-    ],
-    "job_levels": [],
-    "test_types": [
-      "Biodata & Situational Judgment",
-      "Personality & Behavior",
-      "Simulations"
-    ],
-    "remote_support": "yes",
-    "adaptive_support": "no"
-  },
-  {
     "entity_id": "4053",
     "name": "Cyber Risk (New)",
     "url": "https://www.shl.com/products/product-catalog/view/cyber-risk-new/",
@@ -2000,38 +1972,6 @@
     "adaptive_support": "no"
   },
   {
-    "entity_id": "3934",
-    "name": "Entry Level Cashier Solution",
-    "url": "https://www.shl.com/products/product-catalog/view/entry-level-cashier-solution/",
-    "description": "The Precise Fit Entry Level Cashier Solution is for entry-level retail positions in which employees receive payment in the form of cash, check, or credit cards for goods purchased. Sample tasks for these jobs include, but are not limited to: handling payments, offering customer service, and issuing receipts and refunds.\nReport Language Availability: English (USA)",
-    "duration": "19 minutes",
-    "languages": [
-      "English (USA)",
-      "English International",
-      "French (Canada)",
-      "German",
-      "Italian",
-      "French",
-      "Dutch",
-      "Norwegian",
-      "Finnish",
-      "Swedish",
-      "Danish",
-      "Arabic",
-      "Chinese Simplified",
-      "Latin American Spanish"
-    ],
-    "job_levels": [
-      "Entry-Level"
-    ],
-    "test_types": [
-      "Competencies",
-      "Personality & Behavior"
-    ],
-    "remote_support": "yes",
-    "adaptive_support": "no"
-  },
-  {
     "entity_id": "3939",
     "name": "Entry Level Customer Serv-Retail & Contact Center",
     "url": "https://www.shl.com/products/product-catalog/view/entry-level-customer-serv-retail-and-contact-center/",
@@ -2052,134 +1992,6 @@
       "Norwegian",
       "Finnish",
       "Danish"
-    ],
-    "job_levels": [
-      "Entry-Level"
-    ],
-    "test_types": [
-      "Personality & Behavior",
-      "Competencies"
-    ],
-    "remote_support": "yes",
-    "adaptive_support": "no"
-  },
-  {
-    "entity_id": "3935",
-    "name": "Entry Level Customer Service (General) Solution",
-    "url": "https://www.shl.com/products/product-catalog/view/entry-level-customer-service-general-solution/",
-    "description": "The Precise Fit Entry Level Customer Service Solution (General) is for a wide range of entry-level positions where employees are expected to interact with customers when carrying out critical tasks of the job. This includes positions that require frequent interactions with customers, or positions where customer service is not central to the role, but is still essential for successful performance on the job. Sample tasks for these jobs include, but are not limited to: interacting with customers on the phone to provide information; taking orders; solving product or service issues; and responding positively to difficult or irate customers.\nReport Language Availability: English (USA)",
-    "duration": "14 minutes",
-    "languages": [
-      "English (USA)",
-      "English International",
-      "French (Canada)",
-      "Italian",
-      "Dutch",
-      "Norwegian",
-      "Finnish",
-      "Danish",
-      "Latin American Spanish",
-      "German",
-      "French",
-      "Chinese Simplified",
-      "Swedish",
-      "Arabic"
-    ],
-    "job_levels": [
-      "Entry-Level"
-    ],
-    "test_types": [
-      "Competencies",
-      "Personality & Behavior"
-    ],
-    "remote_support": "yes",
-    "adaptive_support": "no"
-  },
-  {
-    "entity_id": "3936",
-    "name": "Entry Level Hotel Front Desk Solution",
-    "url": "https://www.shl.com/products/product-catalog/view/entry-level-hotel-front-desk-solution/",
-    "description": "The Precise Fit Entry Level Hotel Front Desk Solution is for entry-level customer service positions in the hospitality industry. The solution is appropriate for positions in which the majority of the work is done at the front or guest check-in desk. Sample tasks may include: welcoming guests warmly, issuing keys to guests, and accepting payment.\nReport Language Availability: English (USA)",
-    "duration": "20 minutes",
-    "languages": [
-      "French (Canada)",
-      "Italian",
-      "French",
-      "Chinese Simplified",
-      "Swedish",
-      "Arabic",
-      "English (USA)",
-      "English International",
-      "Latin American Spanish",
-      "German",
-      "Dutch",
-      "Norwegian",
-      "Finnish",
-      "Danish"
-    ],
-    "job_levels": [
-      "Entry-Level"
-    ],
-    "test_types": [
-      "Competencies",
-      "Personality & Behavior"
-    ],
-    "remote_support": "yes",
-    "adaptive_support": "no"
-  },
-  {
-    "entity_id": "3937",
-    "name": "Entry Level Sales Solution",
-    "url": "https://www.shl.com/products/product-catalog/view/entry-level-sales-solution/",
-    "description": "The Precise Fit Entry Level Sales Roles Solution is for entry-level positions in which employees proactively sell products or services to customers and have their compensation and/or performance based on sales revenue. Sample tasks for these jobs include, but are not limited to: promoting products to customers, persuading customers to buy products, and completing a transaction with a customer.\nReport Language Availability: English (USA)",
-    "duration": "20 minutes",
-    "languages": [
-      "German",
-      "Italian",
-      "Chinese Simplified",
-      "Finnish",
-      "Danish",
-      "English (USA)",
-      "English International",
-      "Latin American Spanish",
-      "French (Canada)",
-      "French",
-      "Dutch",
-      "Norwegian",
-      "Swedish",
-      "Arabic"
-    ],
-    "job_levels": [
-      "Entry-Level"
-    ],
-    "test_types": [
-      "Competencies",
-      "Personality & Behavior"
-    ],
-    "remote_support": "yes",
-    "adaptive_support": "no"
-  },
-  {
-    "entity_id": "3938",
-    "name": "Entry Level Technical Support Solution",
-    "url": "https://www.shl.com/products/product-catalog/view/entry-level-technical-support-solution/",
-    "description": "The Precise Fit Entry Level Technical Support Solution is for entry-level positions in which employees provide technical assistance to computer users in a contact center environment. Sample tasks for these jobs include, but are not limited to: answer questions or resolve computer problems for clients in person, via telephone, or electronically, provide assistance concerning the use of computer hardware and software, including printing, installation, word processing, electronic mail, and\r\noperating systems.\nReport Language Availability: English (USA)",
-    "duration": "18 minutes",
-    "languages": [
-      "Latin American Spanish",
-      "German",
-      "Chinese Simplified",
-      "Finnish",
-      "Danish",
-      "English (USA)",
-      "English International",
-      "French (Canada)",
-      "Italian",
-      "French",
-      "Dutch",
-      "Norwegian",
-      "Swedish",
-      "Arabic"
     ],
     "job_levels": [
       "Entry-Level"
@@ -6300,37 +6112,6 @@
     "test_types": [
       "Simulations",
       "Biodata & Situational Judgment"
-    ],
-    "remote_support": "yes",
-    "adaptive_support": "no"
-  },
-  {
-    "entity_id": "3930",
-    "name": "Sales & Service Phone Solution",
-    "url": "https://www.shl.com/products/product-catalog/view/sales-and-service-phone-solution/",
-    "description": "As part of Contact Center Simulations, the Sales & Service Phone Solution includes a contact center simulation and three behavioral tests designed to measure a wide range of skills, competencies, and behavioral tendencies relevant for contact center jobs. This solution is designed for contact center roles that involve sales or sales-related behaviors such as recommending products or services and retaining customers. Sample tasks for these jobs include: interact with customers on the phone to sell a product/service; add new or upgraded products or services; extend promotional or retention offers; respond appropriately to customer objections; navigate to information menus to assist the customer and process information; and type information quickly and accurately. Potential job titles that use this simulation are: Telesales Representative, Telemarketer, and Contact Center Representative. The behavioral tests in this solution are intended to measure the candidate\u2019s sales focus, learning potential, and the tendency to meet goals and work hard, even when faced with obstacles. Collectively, the assessments in this solution measure a wide range of important skills, abilities, and behaviors for entry-level contact center roles involving sales or sales and service.",
-    "duration": "35 minutes",
-    "languages": [
-      "English (USA)",
-      "Latin American Spanish",
-      "English (Australia)",
-      "English International",
-      "Chinese Simplified",
-      "Spanish",
-      "German",
-      "Dutch",
-      "Italian",
-      "French",
-      "Portuguese (Brazil)",
-      "French (Canada)"
-    ],
-    "job_levels": [
-      "Entry-Level"
-    ],
-    "test_types": [
-      "Biodata & Situational Judgment",
-      "Personality & Behavior",
-      "Simulations"
     ],
     "remote_support": "yes",
     "adaptive_support": "no"

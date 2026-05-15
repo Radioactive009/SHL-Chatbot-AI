@@ -58,6 +58,39 @@ def should_refuse(user_message):
     )
 
 
+def extract_comparison_entities(message):
+
+    message = message.lower()
+
+    aliases = {
+        "gsa": "global skills assessment",
+        "opq": "occupational personality questionnaire"
+    }
+
+    cleaned = (
+        message
+        .replace("compare", "")
+        .replace("difference between", "")
+        .replace(",", " and ")
+    )
+
+    parts = cleaned.split("and")
+
+    entities = []
+
+    for part in parts:
+
+        entity = part.strip()
+
+        if entity in aliases:
+            entity = aliases[entity]
+
+        if entity:
+            entities.append(entity)
+
+    return entities
+
+
 def build_retrieval_context(retrieved):
 
     retrieval_context = ""
@@ -74,6 +107,23 @@ Job Levels: {item['job_levels']}
 """
 
     return retrieval_context
+
+
+def deduplicate_results(results):
+
+    seen = set()
+    unique_results = []
+
+    for item in results:
+
+        entity_id = item.get("entity_id")
+
+        if entity_id not in seen:
+
+            seen.add(entity_id)
+            unique_results.append(item)
+
+    return unique_results
 
 
 def generate_response(messages):
@@ -107,10 +157,39 @@ def generate_response(messages):
             "end_of_conversation": False
         }
 
-    # Retrieval
-    retrieved = hybrid_search(user_message, top_k=5)
+    # Retrieval Logic
+    if intent == "compare":
 
-    retrieval_context = build_retrieval_context(retrieved)
+        entities = extract_comparison_entities(
+            user_message
+        )
+
+        retrieved = []
+
+        for entity in entities:
+
+            retrieved.extend(
+                hybrid_search(
+                    entity,
+                    top_k=3
+                )
+            )
+
+        retrieved = deduplicate_results(
+            retrieved
+        )
+
+    else:
+
+        retrieved = hybrid_search(
+            user_message,
+            top_k=10
+        )
+
+    # Build Context
+    retrieval_context = build_retrieval_context(
+        retrieved
+    )
 
     # Prompt
     prompt = f"""
@@ -123,9 +202,10 @@ Retrieved Assessments:
 {retrieval_context}
 
 Instructions:
-- Recommend the most relevant SHL assessments
+- Recommend ONLY retrieved SHL assessments
 - Explain briefly why each assessment fits
-- Keep the response concise and recruiter-friendly
+- Keep responses concise and recruiter-friendly
+- If comparison is requested, compare assessments directly
 - Do NOT output JSON
 - Do NOT invent assessments
 """
@@ -163,7 +243,7 @@ Instructions:
             "name": item["name"],
             "url": item["url"],
             "test_type": map_test_types(
-                item.get("keys", [])
+                item.get("test_types", [])
             )
         })
 
@@ -179,10 +259,17 @@ if __name__ == "__main__":
     test_messages = [
         {
             "role": "user",
-            "content": "Hiring a Java backend developer"
+            "content": "Compare OPQ and GSA"
         }
     ]
 
-    result = generate_response(test_messages)
+    result = generate_response(
+        test_messages
+    )
 
-    print(json.dumps(result, indent=2))
+    print(
+        json.dumps(
+            result,
+            indent=2
+        )
+    )
