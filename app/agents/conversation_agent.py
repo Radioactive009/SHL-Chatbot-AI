@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from groq import Groq
 
 from app.retrieval.hybrid_search import hybrid_search
+from app.utils.test_type_mapper import map_test_types
 
 # Load environment variables
 load_dotenv(override=True)
@@ -160,7 +161,10 @@ Instructions:
 
         recommendations.append({
             "name": item["name"],
-            "url": item["url"]
+            "url": item["url"],
+            "test_type": map_test_types(
+                item.get("keys", [])
+            )
         })
 
     return {
