@@ -11,16 +11,40 @@ collection = client.get_or_create_collection(
 )
 
 
+def clean_metadata(metadata):
+    cleaned = {}
+
+    for key, value in metadata.items():
+
+        # Convert lists to comma-separated strings
+        if isinstance(value, list):
+            cleaned[key] = ", ".join(value) if value else "N/A"
+
+        # Replace empty strings
+        elif value == "":
+            cleaned[key] = "N/A"
+
+        else:
+            cleaned[key] = value
+
+    return cleaned
+
+
 def main():
     with open(EMBEDDINGS_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     for item in data:
+
+        cleaned_metadata = clean_metadata(
+            item["metadata"]
+        )
+
         collection.add(
-            ids=[item["id"]],
+            ids=[str(item["id"])],
             embeddings=[item["embedding"]],
             documents=[item["document"]],
-            metadatas=[item["metadata"]]
+            metadatas=[cleaned_metadata]
         )
 
     print(f"Stored {len(data)} assessments in ChromaDB")
