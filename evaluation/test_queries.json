@@ -1,0 +1,14 @@
+[
+  {
+    "query": "Hiring a Java backend developer",
+    "expected_keywords": ["Java"]
+  },
+  {
+    "query": "Need a sales personality assessment",
+    "expected_keywords": ["Sales", "OPQ"]
+  },
+  {
+    "query": "Looking for cognitive ability tests",
+    "expected_keywords": ["Ability", "Aptitude"]
+  }
+]
