@@ -1,19 +1,20 @@
 import os
 import json
+
 from dotenv import load_dotenv
-import google.generativeai as genai
+from groq import Groq
 
 from app.retrieval.hybrid_search import hybrid_search
 
-load_dotenv()
+# Load environment variables
+load_dotenv(override=True)
 
-genai.configure(
-    api_key=os.getenv("GEMINI_API_KEY")
+# Groq Client
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
 )
 
-model = genai.GenerativeModel("gemini-2.0-flash")
-
-
+# Load system prompt
 SYSTEM_PROMPT = open(
     "app/prompts/system_prompt.txt",
     "r",
@@ -56,6 +57,24 @@ def should_refuse(user_message):
     )
 
 
+def build_retrieval_context(retrieved):
+
+    retrieval_context = ""
+
+    for item in retrieved:
+
+        retrieval_context += f"""
+Assessment Name: {item['name']}
+URL: {item['url']}
+Description: {item['description']}
+Test Types: {item['test_types']}
+Job Levels: {item['job_levels']}
+
+"""
+
+    return retrieval_context
+
+
 def generate_response(messages):
 
     user_message = messages[-1]["content"]
@@ -64,7 +83,10 @@ def generate_response(messages):
     if should_refuse(user_message):
 
         return {
-            "reply": "I can only help with SHL assessment recommendations and comparisons.",
+            "reply": (
+                "I can only help with SHL assessment "
+                "recommendations and comparisons."
+            ),
             "recommendations": [],
             "end_of_conversation": False
         }
@@ -87,32 +109,51 @@ def generate_response(messages):
     # Retrieval
     retrieved = hybrid_search(user_message, top_k=5)
 
-    retrieval_context = ""
+    retrieval_context = build_retrieval_context(retrieved)
 
-    for item in retrieved:
-
-        retrieval_context += f"""
-        Assessment Name: {item['name']}
-        URL: {item['url']}
-        Description: {item['description']}
-        Test Types: {item['test_types']}
-        Job Levels: {item['job_levels']}
-        """
-
+    # Prompt
     prompt = f"""
-    {SYSTEM_PROMPT}
+{SYSTEM_PROMPT}
 
-    Conversation:
-    {json.dumps(messages, indent=2)}
+Conversation:
+{json.dumps(messages, indent=2)}
 
-    Retrieved Assessments:
-    {retrieval_context}
+Retrieved Assessments:
+{retrieval_context}
 
-    Generate a grounded recruiter-friendly response.
-    """
+Instructions:
+- Recommend the most relevant SHL assessments
+- Explain briefly why each assessment fits
+- Keep the response concise and recruiter-friendly
+- Do NOT output JSON
+- Do NOT invent assessments
+"""
 
-    response = model.generate_content(prompt)
+    # Groq API Call
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.3
+    )
 
+    # Clean Reply
+    clean_reply = (
+        response.choices[0]
+        .message
+        .content
+        .strip()
+    )
+
+    # Recommendation Objects
     recommendations = []
 
     for item in retrieved:
@@ -123,7 +164,7 @@ def generate_response(messages):
         })
 
     return {
-        "reply": response.text,
+        "reply": clean_reply,
         "recommendations": recommendations,
         "end_of_conversation": False
     }
