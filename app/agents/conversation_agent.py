@@ -27,12 +27,28 @@ def detect_intent(user_message):
 
     message = user_message.lower()
 
+    # Comparison
     if "difference" in message or "compare" in message:
         return "compare"
 
-    if "also" in message or "add" in message:
+    # Refinement detection
+    refinement_keywords = [
+        "also",
+        "add",
+        "include",
+        "remove",
+        "replace",
+        "instead",
+        "another"
+    ]
+
+    if any(
+        keyword in message
+        for keyword in refinement_keywords
+    ):
         return "refine"
 
+    # Clarification
     vague_queries = [
         "test",
         "assessment",
@@ -115,6 +131,7 @@ URL: {item['url']}
 Description: {item['description']}
 Test Types: {item['test_types']}
 Job Levels: {item['job_levels']}
+Duration: {item.get('duration', 'N/A')}
 
 """
 
@@ -138,6 +155,23 @@ def deduplicate_results(results):
     return unique_results
 
 
+def get_conversation_context(messages):
+
+    previous_user_messages = []
+
+    for msg in messages:
+
+        if msg["role"] == "user":
+
+            previous_user_messages.append(
+                msg["content"]
+            )
+
+    return " ".join(
+        previous_user_messages
+    )
+
+
 def should_include_recommendation(
     query,
     assessment_name
@@ -146,7 +180,7 @@ def should_include_recommendation(
     query_lower = query.lower()
     name_lower = assessment_name.lower()
 
-    # Python-specific filtering
+    # Python filtering
     if "python" in query_lower:
 
         allowed_terms = [
@@ -163,7 +197,7 @@ def should_include_recommendation(
         ):
             return False
 
-    # Java-specific filtering
+    # Java filtering
     if "java" in query_lower:
 
         allowed_terms = [
@@ -179,12 +213,35 @@ def should_include_recommendation(
         ):
             return False
 
+    # React filtering
+    if "react" in query_lower:
+
+        allowed_terms = [
+            "react",
+            "javascript",
+            "frontend",
+            "node",
+            "express"
+        ]
+
+        if not any(
+            term in name_lower
+            for term in allowed_terms
+        ):
+            return False
+
     return True
 
 
 def generate_response(messages):
 
     user_message = messages[-1]["content"]
+
+    conversation_context = (
+        get_conversation_context(
+            messages
+        )
+    )
 
     # Refusal Layer
     if should_refuse(user_message):
@@ -237,9 +294,9 @@ def generate_response(messages):
 
     else:
 
-        # Reduced to improve precision
+        # Use full conversation context
         retrieved = hybrid_search(
-            user_message,
+            conversation_context,
             top_k=5
         )
 
@@ -265,6 +322,8 @@ Instructions:
 - If comparison is requested, compare assessments directly
 - Prioritize the most relevant technical matches
 - Avoid weak or unrelated recommendations
+- Use previous conversation context when refining recommendations
+- Format recommendations as a markdown table
 - Do NOT output JSON
 - Do NOT invent assessments
 """
@@ -308,7 +367,7 @@ Instructions:
 
         # Filter weak recommendations
         if not should_include_recommendation(
-            user_message,
+            conversation_context,
             name
         ):
             continue
@@ -336,7 +395,11 @@ if __name__ == "__main__":
     test_messages = [
         {
             "role": "user",
-            "content": "Python developer assessment"
+            "content": "Need assessments for Java backend developer"
+        },
+        {
+            "role": "user",
+            "content": "Also add cognitive tests"
         }
     ]
 
