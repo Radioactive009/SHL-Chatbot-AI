@@ -16,6 +16,15 @@ class ChatRequest(BaseModel):
     messages: List[Message]
 
 
+@router.get("/")
+async def root():
+    return {
+        "message": "Welcome to the SHL Assessment Recommender API",
+        "documentation": "/docs",
+        "health_check": "/health"
+    }
+
+
 @router.get("/health")
 def health_check():
 
