@@ -172,67 +172,6 @@ def get_conversation_context(messages):
     )
 
 
-def should_include_recommendation(
-    query,
-    assessment_name
-):
-
-    query_lower = query.lower()
-    name_lower = assessment_name.lower()
-
-    # Python filtering
-    if "python" in query_lower:
-
-        allowed_terms = [
-            "python",
-            "programming",
-            "automata",
-            "coding",
-            "developer"
-        ]
-
-        if not any(
-            term in name_lower
-            for term in allowed_terms
-        ):
-            return False
-
-    # Java filtering
-    if "java" in query_lower:
-
-        allowed_terms = [
-            "java",
-            "programming",
-            "developer",
-            "j2ee"
-        ]
-
-        if not any(
-            term in name_lower
-            for term in allowed_terms
-        ):
-            return False
-
-    # React filtering
-    if "react" in query_lower:
-
-        allowed_terms = [
-            "react",
-            "javascript",
-            "frontend",
-            "node",
-            "express"
-        ]
-
-        if not any(
-            term in name_lower
-            for term in allowed_terms
-        ):
-            return False
-
-    return True
-
-
 def generate_response(messages):
 
     user_message = messages[-1]["content"]
@@ -284,7 +223,7 @@ def generate_response(messages):
             retrieved.extend(
                 hybrid_search(
                     entity,
-                    top_k=3
+                    top_k=5
                 )
             )
 
@@ -294,10 +233,9 @@ def generate_response(messages):
 
     else:
 
-        # Use full conversation context
         retrieved = hybrid_search(
             conversation_context,
-            top_k=5
+            top_k=10
         )
 
     # Build Context
@@ -320,8 +258,7 @@ Instructions:
 - Explain briefly why each assessment fits
 - Keep responses concise and recruiter-friendly
 - If comparison is requested, compare assessments directly
-- Prioritize the most relevant technical matches
-- Avoid weak or unrelated recommendations
+- Prioritize the most relevant matches
 - Use previous conversation context when refining recommendations
 - Format recommendations as a markdown table
 - Do NOT output JSON
@@ -365,22 +302,17 @@ Instructions:
         if name in seen_names:
             continue
 
-        # Filter weak recommendations
-        if not should_include_recommendation(
-            conversation_context,
-            name
-        ):
-            continue
-
         seen_names.add(name)
+
+        mapped_types = map_test_types(
+            item.get("test_types", []),
+            item.get("name", "")
+        )
 
         recommendations.append({
             "name": name,
             "url": item["url"],
-            "test_type": map_test_types(
-                item.get("test_types", []),
-                item.get("name", "")
-            )
+            "test_type": mapped_types[0]
         })
 
     return {
