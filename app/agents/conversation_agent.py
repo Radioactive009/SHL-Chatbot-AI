@@ -315,6 +315,9 @@ Instructions:
             "test_type": mapped_types[0]
         })
 
+    # SHOW ONLY TOP 5
+    recommendations = recommendations[:5]
+
     return {
         "reply": clean_reply,
         "recommendations": recommendations,
