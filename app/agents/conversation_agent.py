@@ -33,7 +33,18 @@ def detect_intent(user_message):
     if "also" in message or "add" in message:
         return "refine"
 
-    if len(message.split()) < 4:
+    vague_queries = [
+        "test",
+        "assessment",
+        "need assessment",
+        "need test",
+        "hiring",
+        "hiring test",
+        "hiring assessment",
+        "i want test",
+        "i want assessment"
+    ]
+    if message.strip() in vague_queries:
         return "clarify"
 
     return "recommend"
