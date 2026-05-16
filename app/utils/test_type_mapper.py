@@ -9,13 +9,53 @@ TEST_TYPE_MAP = {
 }
 
 
-def map_test_types(keys):
+def infer_from_name(name):
 
-    short_codes = []
+    name = name.lower()
 
-    for key in keys:
+    if "opq" in name:
+        return ["P"]
 
-        if key in TEST_TYPE_MAP:
-            short_codes.append(TEST_TYPE_MAP[key])
+    if "personality" in name:
+        return ["P"]
 
-    return short_codes
+    if "sales transformation" in name:
+        return ["P"]
+
+    if "verify" in name:
+        return ["A"]
+
+    if "numerical" in name:
+        return ["A"]
+
+    if "verbal" in name:
+        return ["A"]
+
+    return ["K"]
+
+
+def map_test_types(
+    keys,
+    assessment_name=""
+):
+
+    # Use catalog metadata first
+    if keys:
+
+        short_codes = []
+
+        for key in keys:
+
+            if key in TEST_TYPE_MAP:
+
+                short_codes.append(
+                    TEST_TYPE_MAP[key]
+                )
+
+        if short_codes:
+            return short_codes
+
+    # Fallback intelligent inference
+    return infer_from_name(
+        assessment_name
+    )

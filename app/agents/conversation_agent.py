@@ -44,6 +44,7 @@ def detect_intent(user_message):
         "i want test",
         "i want assessment"
     ]
+
     if message.strip() in vague_queries:
         return "clarify"
 
@@ -137,6 +138,50 @@ def deduplicate_results(results):
     return unique_results
 
 
+def should_include_recommendation(
+    query,
+    assessment_name
+):
+
+    query_lower = query.lower()
+    name_lower = assessment_name.lower()
+
+    # Python-specific filtering
+    if "python" in query_lower:
+
+        allowed_terms = [
+            "python",
+            "programming",
+            "automata",
+            "coding",
+            "developer"
+        ]
+
+        if not any(
+            term in name_lower
+            for term in allowed_terms
+        ):
+            return False
+
+    # Java-specific filtering
+    if "java" in query_lower:
+
+        allowed_terms = [
+            "java",
+            "programming",
+            "developer",
+            "j2ee"
+        ]
+
+        if not any(
+            term in name_lower
+            for term in allowed_terms
+        ):
+            return False
+
+    return True
+
+
 def generate_response(messages):
 
     user_message = messages[-1]["content"]
@@ -192,9 +237,10 @@ def generate_response(messages):
 
     else:
 
+        # Reduced to improve precision
         retrieved = hybrid_search(
             user_message,
-            top_k=10
+            top_k=5
         )
 
     # Build Context
@@ -217,6 +263,8 @@ Instructions:
 - Explain briefly why each assessment fits
 - Keep responses concise and recruiter-friendly
 - If comparison is requested, compare assessments directly
+- Prioritize the most relevant technical matches
+- Avoid weak or unrelated recommendations
 - Do NOT output JSON
 - Do NOT invent assessments
 """
@@ -234,7 +282,7 @@ Instructions:
                 "content": prompt
             }
         ],
-        temperature=0.3
+        temperature=0.2
     )
 
     # Clean Reply
@@ -248,13 +296,31 @@ Instructions:
     # Recommendation Objects
     recommendations = []
 
+    seen_names = set()
+
     for item in retrieved:
 
+        name = item["name"]
+
+        # Prevent duplicates
+        if name in seen_names:
+            continue
+
+        # Filter weak recommendations
+        if not should_include_recommendation(
+            user_message,
+            name
+        ):
+            continue
+
+        seen_names.add(name)
+
         recommendations.append({
-            "name": item["name"],
+            "name": name,
             "url": item["url"],
             "test_type": map_test_types(
-                item.get("test_types", [])
+                item.get("test_types", []),
+                item.get("name", "")
             )
         })
 
@@ -270,7 +336,7 @@ if __name__ == "__main__":
     test_messages = [
         {
             "role": "user",
-            "content": "Compare OPQ and GSA"
+            "content": "Python developer assessment"
         }
     ]
 
