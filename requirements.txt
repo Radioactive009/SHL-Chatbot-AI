@@ -2,8 +2,8 @@ fastapi
 uvicorn
 pydantic
 python-dotenv
-pandas
-numpy
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
 sentence-transformers
 chromadb
 rank-bm25
