@@ -1,4 +1,5 @@
 import json
+import re
 import chromadb
 
 from rank_bm25 import BM25Okapi
@@ -27,7 +28,32 @@ with open(
 
     catalog = json.load(f)
 
-# BM25 Documents
+
+# -----------------------------
+# TEXT CLEANING
+# -----------------------------
+def clean_text(text):
+
+    text = text.lower()
+
+    text = re.sub(
+        r"[^a-z0-9\s]",
+        " ",
+        text
+    )
+
+    text = re.sub(
+        r"\s+",
+        " ",
+        text
+    ).strip()
+
+    return text
+
+
+# -----------------------------
+# BM25 DOCUMENTS
+# -----------------------------
 documents = [
 
     f"""
@@ -41,48 +67,68 @@ documents = [
 ]
 
 tokenized_docs = [
-    doc.lower().split()
+
+    clean_text(doc).split()
+
     for doc in documents
 ]
 
 bm25 = BM25Okapi(tokenized_docs)
 
 
-def compute_keyword_overlap(query, text):
+# -----------------------------
+# KEYWORD OVERLAP
+# -----------------------------
+def compute_keyword_overlap(
+    query,
+    text
+):
 
     query_words = set(
-        query.lower().split()
+        clean_text(query).split()
     )
 
     text_words = set(
-        text.lower().split()
+        clean_text(text).split()
     )
 
-    return len(
-        query_words.intersection(
-            text_words
-        )
+    overlap = query_words.intersection(
+        text_words
     )
 
+    return len(overlap)
 
-def hybrid_search(query, top_k=5):
 
-    # Semantic Search
+# -----------------------------
+# HYBRID SEARCH
+# -----------------------------
+def hybrid_search(
+    query,
+    top_k=10
+):
+
+    # -------------------------
+    # SEMANTIC SEARCH
+    # -------------------------
     query_embedding = model.encode(
         query
     ).tolist()
 
     semantic_results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=top_k * 3
+        n_results=top_k * 4
     )
 
     semantic_docs = semantic_results[
         "metadatas"
     ][0]
 
-    # BM25 Search
-    tokenized_query = query.lower().split()
+    # -------------------------
+    # BM25 SEARCH
+    # -------------------------
+    tokenized_query = clean_text(
+        query
+    ).split()
 
     bm25_scores = bm25.get_scores(
         tokenized_query
@@ -92,18 +138,22 @@ def hybrid_search(query, top_k=5):
         zip(catalog, bm25_scores),
         key=lambda x: x[1],
         reverse=True
-    )[:top_k * 3]
+    )[:top_k * 4]
 
-    # Combined Scoring
+    # -------------------------
+    # COMBINED SCORING
+    # -------------------------
     combined_scores = {}
 
-    # Add Semantic Results
-    for rank, doc in enumerate(semantic_docs):
+    # Semantic Results
+    for rank, doc in enumerate(
+        semantic_docs
+    ):
 
         entity_id = doc["entity_id"]
 
         semantic_score = (
-            top_k * 3 - rank
+            (top_k * 4) - rank
         )
 
         keyword_bonus = compute_keyword_overlap(
@@ -111,16 +161,24 @@ def hybrid_search(query, top_k=5):
             f"""
             {doc.get('name', '')}
             {doc.get('description', '')}
+            {' '.join(doc.get('test_types', []))}
             """
         )
 
+        total_score = (
+            semantic_score * 2
+        ) + keyword_bonus
+
         combined_scores[entity_id] = {
             "doc": doc,
-            "score": semantic_score + keyword_bonus
+            "score": total_score
         }
 
-    # Add BM25 Results
-    for rank, (doc, bm25_score) in enumerate(bm25_ranked):
+    # BM25 Results
+    for rank, (
+        doc,
+        bm25_score
+    ) in enumerate(bm25_ranked):
 
         entity_id = doc["entity_id"]
 
@@ -129,10 +187,11 @@ def hybrid_search(query, top_k=5):
             f"""
             {doc.get('name', '')}
             {doc.get('description', '')}
+            {' '.join(doc.get('test_types', []))}
             """
         )
 
-        final_score = (
+        bm25_final = (
             bm25_score +
             keyword_bonus
         )
@@ -141,35 +200,60 @@ def hybrid_search(query, top_k=5):
 
             combined_scores[entity_id][
                 "score"
-            ] += final_score
+            ] += bm25_final
 
         else:
 
             combined_scores[entity_id] = {
                 "doc": doc,
-                "score": final_score
+                "score": bm25_final
             }
 
-    # Final Reranking
+    # -------------------------
+    # FINAL RERANKING
+    # -------------------------
     ranked = sorted(
         combined_scores.values(),
         key=lambda x: x["score"],
         reverse=True
     )
 
-    final_results = [
-        item["doc"]
-        for item in ranked[:top_k]
-    ]
+    final_results = []
+
+    seen = set()
+
+    for item in ranked:
+
+        doc = item["doc"]
+
+        entity_id = doc["entity_id"]
+
+        if entity_id in seen:
+            continue
+
+        seen.add(entity_id)
+
+        final_results.append(doc)
+
+        if len(final_results) >= top_k:
+            break
 
     return final_results
 
 
+# -----------------------------
+# LOCAL TEST
+# -----------------------------
 if __name__ == "__main__":
 
     results = hybrid_search(
         "Python developer assessment"
     )
 
+    print("\nTOP RESULTS:\n")
+
     for r in results:
-        print(r["name"])
+
+        print(
+            f"- {r['name']}"
+        )
